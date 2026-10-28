@@ -1,322 +1,252 @@
-# Document Verification System - OCR Demo
+# VeriHire — AI-Powered Document Verification Platform
 
-A full-stack web application for verifying identity documents using Optical Character Recognition (OCR). Users fill out a multi-step form and upload document images or PDFs, which are processed using Tesseract OCR to extract text and verify against the provided information.
+A professional web application for verifying documents submitted during recruitment and employment screening. Built with FastAPI (backend) and React + Vite + TypeScript (frontend).
 
-## Features
+## Product Overview
 
-✅ **Multi-step Form** - User-friendly form for entering personal information
-✅ **Document Upload** - Support for images (JPG, PNG, BMP, TIFF) and PDFs
-✅ **OCR Text Extraction** - Automatic text extraction using Tesseract
-✅ **Field Parsing** - Extract name, PAN, and Aadhaar numbers from documents
-✅ **Fuzzy Matching** - Compare extracted values with form inputs using similarity scoring
-✅ **Modern UI** - Clean, responsive design with Tailwind CSS
-✅ **Real-time Validation** - Form validation before submission
-✅ **Detailed Results** - View extracted text and match confidence scores
+VeriHire helps HR teams and verification analysts:
 
-## Project Structure
+- Create and manage candidate verification cases
+- Upload identity documents, educational certificates, marksheets, experience letters, offer letters, and payslips
+- Extract information from uploaded documents using OCR (Tesseract)
+- Compare extracted information with candidate-submitted details using fuzzy matching (RapidFuzz)
+- Identify mismatches, missing fields, and documents requiring manual review
+- Review field-level comparison results
+- Generate verification reports
+- Maintain an audit trail of verification actions
 
-```
-Doc-verify/
-├── backend/                 # FastAPI backend
-│   ├── main.py             # FastAPI application and API endpoints
-│   └── requirements.txt     # Python dependencies
-└── frontend/               # React TypeScript frontend
-    ├── src/
-    │   ├── components/     # React components
-    │   │   ├── PersonalInfo.tsx      # Step 1: Personal information
-    │   │   ├── DocumentInfo.tsx      # Step 2: Document numbers
-    │   │   ├── FileUpload.tsx        # Step 3: File upload
-    │   │   └── Results.tsx           # Results display
-    │   ├── types/          # TypeScript type definitions
-    │   ├── api/            # API client and endpoints
-    │   ├── App.tsx         # Main App component
-    │   ├── App.css         # Styling with Tailwind
-    │   └── main.tsx        # Entry point
-    ├── index.html          # HTML template
-    ├── package.json        # Node dependencies
-    ├── tsconfig.json       # TypeScript configuration
-    ├── vite.config.ts      # Vite configuration
-    ├── tailwind.config.js  # Tailwind CSS configuration
-    └── postcss.config.js   # PostCSS configuration
-├── README.md               # Project documentation
-└── .gitignore             # Git ignore file
-```
+## Core Principle
+
+The platform distinguishes between **extracted information**, **matching information**, **document-integrity signals**, **human review**, and **official issuer verification**. A document is never claimed genuine merely because OCR succeeded or fields matched.
 
 ## Tech Stack
 
 ### Backend
-- **FastAPI** - Modern, fast Python web framework
-- **Tesseract OCR** - Open-source OCR engine for text extraction
-- **pytesseract** - Python wrapper for Tesseract
-- **pdf2image** - Convert PDF pages to images
-- **Pillow** - Python Imaging Library
-- **rapidfuzz** - Fast fuzzy string matching
-- **Uvicorn** - ASGI server for FastAPI
+- **FastAPI** — Web framework with automatic OpenAPI docs
+- **uvicorn** — ASGI server
+- **Pydantic** — Data validation
+- **Tesseract OCR** (via pytesseract) — Text extraction from images/PDFs
+- **Pillow + pdf2image** — Image/PDF processing
+- **RapidFuzz** — Fuzzy string matching
+- **SQLAlchemy + Alembic** — ORM and database migrations (SQLite for dev, PostgreSQL for prod)
+- **Pytest** — Testing
 
 ### Frontend
-- **React 18** - JavaScript library for building UIs
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS** - Utility-first CSS framework
-- **Axios** - HTTP client for API calls
-- **Vite** - Fast build tool and development server
+- **React 18 + TypeScript** — UI framework
+- **Vite** — Build tool and dev server
+- **Tailwind CSS** — Styling
+- **React Router** — Client-side routing
+- **TanStack Query** — Server-state management
+- **React Hook Form + Zod** — Form validation
+- **Lucide React** — Icons
+
+## Project Structure
+
+```
+Doc-Verify/
+├── backend/
+│   ├── app/
+│   │   ├── api/routes/       # API route handlers
+│   │   ├── core/             # Config, database, security
+│   │   ├── models/           # SQLAlchemy models
+│   │   ├── repositories/     # Data access layer
+│   │   ├── services/         # Business logic (OCR, extraction, matching, providers)
+│   │   └── main.py           # FastAPI app entry point
+│   ├── migrations/           # Alembic migration files
+│   ├── tests/                # Pytest test suite
+│   ├── requirements.txt      # Python dependencies
+│   └── main.py               # Legacy entry point (preserved)
+├── frontend/
+│   ├── src/
+│   │   ├── app/              # App wrapper with providers
+│   │   ├── components/       # UI components (ui/, layout/)
+│   │   ├── contexts/         # React context (auth)
+│   │   ├── hooks/            # Custom hooks
+│   │   ├── lib/              # Utilities (API client)
+│   │   ├── pages/            # Page components
+│   │   ├── routes/           # Route definitions
+│   │   ├── services/         # API service layer
+│   │   └── types/            # TypeScript types
+│   ├── dist/                 # Production build output
+│   ├── package.json          # Node dependencies
+│   └── vite.config.ts        # Vite configuration
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── API.md
+│   ├── SECURITY.md
+│   ├── USER_GUIDE.md
+│   └── DEVELOPMENT_LOG.md
+├── .env.example              # Environment variable template
+├── .gitignore                # Git ignore rules
+└── README.md                 # This file
+```
+
+## Prerequisites
+
+### Backend
+- Python 3.10+
+- Tesseract OCR installed and available on PATH (or set `PYTESSERACT_PATH`)
+- pip
+
+### Frontend
+- Node.js 18+
+- npm
 
 ## Installation
 
-### Prerequisites
+### 1. Clone the repository
 
-- Python 3.8+
-- Node.js 16+
-- Tesseract OCR installed on system
-
-#### Install Tesseract (Required)
-
-**On Ubuntu/Debian:**
 ```bash
-sudo apt-get install tesseract-ocr
+cd D:\Project_phase_2k26\Doc-Verify
 ```
 
-**On macOS:**
-```bash
-brew install tesseract
-```
+### 2. Backend Setup
 
-**On Windows:**
-Download installer from: https://github.com/UB-Mannheim/tesseract/wiki
-
-### Backend Setup
-
-1. Navigate to backend directory:
 ```bash
 cd backend
-```
 
-2. Create a Python virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# Create virtual environment
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+# source .venv/bin/activate  # Linux/Mac
 
-3. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Copy environment template
+copy ..\.env.example .env  # Windows
+# cp ../.env.example .env  # Linux/Mac
+
+# Initialize database
+alembic upgrade head
+
+# Start the server
+python app/main.py
+# or: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-4. Run the FastAPI server:
-```bash
-python main.py
-```
+Backend API available at: http://localhost:8000
+API docs: http://localhost:8000/docs
 
-The API will be available at `http://localhost:8000`
-API documentation: `http://localhost:8000/docs`
+### 3. Frontend Setup
 
-### Frontend Setup
-
-1. Navigate to frontend directory:
 ```bash
 cd frontend
-```
 
-2. Install dependencies:
-```bash
+# Install dependencies
 npm install
-```
 
-3. Start the development server:
-```bash
+# Copy environment template
+copy ..\.env.example .env  # Windows
+# cp ../.env.example .env  # Linux/Mac
+
+# Start development server
 npm run dev
+
+# Production build
+npm run build
 ```
 
-The front-end will be available at `http://localhost:3000` (or `http://localhost:5173` if port 3000 is in use)
+Frontend available at: http://localhost:3000
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and adjust as needed:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | Database connection string | `sqlite:///./verihire.db` |
+| `PYTESSERACT_PATH` | Path to Tesseract binary | (system PATH) |
+| `MAX_UPLOAD_SIZE_MB` | Max file upload size in MB | `10` |
+| `MATCH_THRESHOLD` | Fuzzy match threshold (0.0-1.0) | `0.8` |
+| `MIN_MATCH_COUNT` | Minimum fields to match for overall pass | `2` |
+| `CORS_ORIGINS` | Comma-separated allowed CORS origins | `http://localhost:3000,http://localhost:5173` |
+| `REACT_APP_API_URL` | Backend API URL for frontend | `http://localhost:8000` |
+
+## Running Tests
+
+### Backend
+
+```bash
+cd backend
+python -m pytest tests/ -v
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm run build  # TypeScript check + Vite build
+```
 
 ## API Endpoints
 
-### `GET /health`
-Health check endpoint
+### Verification
+- `GET /health` — Health check
+- `POST /verify-document` — Verify document against candidate data (multipart/form-data)
 
-**Response:**
-```json
-{
-  "status": "healthy"
-}
-```
+### Candidates
+- `POST /candidates/` — Create candidate
+- `GET /candidates/{id}` — Get candidate
+- `GET /candidates/` — List candidates (with search, status filter, pagination)
 
-### `POST /verify-document`
-Verify uploaded document against form data
+### Verification Cases
+- `GET /cases/` — List cases (with filters, pagination)
+- `GET /cases/{id}` — Get case
+- `PATCH /cases/{id}` — Update case (reviewer decisions)
 
-**Request (multipart/form-data):**
-- `full_name`: string - User's full name
-- `pan_number`: string - PAN number (format: AAAAA9999A)
-- `aadhaar_number`: string - Aadhaar number (12 digits)
-- `document`: file - Image (JPG, PNG, BMP, TIFF) or PDF file
+### Documents
+- `GET /documents/` — List documents
 
-**Response:**
-```json
-{
-  "overall_match": true,
-  "match_count": 3,
-  "total_fields": 3,
-  "extraction_result": {
-    "raw_text": "Extracted text from document...",
-    "extracted_name": "John Doe",
-    "extracted_pan": "ABCDE1234F",
-    "extracted_aadhaar": "123456789012"
-  },
-  "match_results": [
-    {
-      "field": "full_name",
-      "matched": true,
-      "similarity_score": 0.95,
-      "form_value": "John Doe",
-      "extracted_value": "John Doe"
-    },
-    {
-      "field": "pan_number",
-      "matched": true,
-      "similarity_score": 1.0,
-      "form_value": "ABCDE1234F",
-      "extracted_value": "ABCDE1234F"
-    },
-    {
-      "field": "aadhaar_number",
-      "matched": true,
-      "similarity_score": 1.0,
-      "form_value": "123456789012",
-      "extracted_value": "123456789012"
-    }
-  ],
-  "message": "✓ Document verified! 3 out of 3 fields matched."
-}
-```
+### Audit Logs
+- `GET /audit-logs/` — List audit logs
 
-## How It Works
+### Dashboard
+- `GET /dashboard/metrics` — Dashboard metrics
 
-1. **User Input** - User enters their personal information through a 3-step form
-   - Step 1: Full name
-   - Step 2: PAN and Aadhaar numbers
-   - Step 3: Upload ID document image or PDF
+## Verification Result Model
 
-2. **Document Processing** - Backend processes the uploaded document
-   - Detects file type (image or PDF)
-   - Converts PDFs to images if needed
-   - Applies Tesseract OCR to extract text
+The platform uses a transparent outcome model:
 
-3. **Text Parsing** - Backend parses extracted text
-   - Uses regex patterns to find name, PAN, and Aadhaar
-   - Cleans and normalizes extracted values
+| Status | Meaning |
+|--------|---------|
+| `PROCESSING` | Verification still in progress |
+| `MATCHED_FIELDS` | Submitted and extracted values meet matching rules |
+| `MISMATCH` | One or more required fields don't meet matching rules |
+| `REVIEW_REQUIRED` | Extraction quality insufficient or human decision needed |
+| `UNVERIFIABLE` | Required evidence or verification method unavailable |
+| `ISSUER_VERIFIED` | Authorized issuer/provider returned successful result |
 
-4. **Comparison** - Backend compares extracted values with form input
-   - Uses fuzzy string matching (token_set_ratio)
-   - Calculates similarity score (0-1 range)
-   - Marks field as "matched" if similarity ≥ 0.8 (80%)
+A similarity score is not a probability of document authenticity.
 
-5. **Results Display** - Frontend displays detailed verification results
-   - Shows overall verification status
-   - Displays extracted text
-   - Shows similarity scores and confidence levels
-   - Highlights matched/unmatched fields
+## Security
 
-## Validation Rules
+- Server-side file validation (magic bytes, MIME type, size limits)
+- Randomized server-side filenames
+- Safe temporary file handling with automatic cleanup
+- No public file URLs by default
+- Strict CORS configuration
+- Sensitive data masking (PAN/Aadhaar masked in UI lists)
+- No credentials hardcoded in source code
+- Audit logging excludes sensitive values
 
-### Name
-- Minimum 3 characters
-- Similarity threshold: 80%
+See `docs/SECURITY.md` for details.
 
-### PAN Number
-- Format: AAAAA9999A (5 letters, 4 digits, 1 letter)
-- Exact match or high similarity (80%+)
+## Provider Integrations
 
-### Aadhaar Number
-- Format: 12 digits
-- Exact match or high similarity (80%+)
+Official provider integrations (DigiLocker/NAD, universities, employers) are prepared through a provider adapter pattern but are **not configured by default**. A clearly labeled mock provider is available for local development. Never present mock results as official verification.
 
-### Verification Pass Criteria
-- At least 2 out of 3 fields must match
-- Otherwise, verification fails
+See `docs/ARCHITECTURE.md` for provider integration details.
 
-## File Support
+## Known Limitations
 
-**Images:**
-- JPEG (.jpg, .jpeg)
-- PNG (.png)
-- BMP (.bmp)
-- TIFF (.tiff)
-
-**Documents:**
-- PDF (.pdf)
-
-**File Size Limit:** 10 MB
-
-## Development Notes
-
-### Adding Comments for Learning
-The codebase includes detailed comments explaining:
-- Component purposes and functionality
-- How OCR text extraction works
-- Field parsing strategies
-- API endpoint behavior
-- TypeScript type definitions
-
-### Extending the Application
-
-1. **Add More Document Types**
-   - Modify regex patterns in `parse_extracted_data()` function
-   - Add document type detection logic
-
-2. **Improve OCR Accuracy**
-   - Preprocess images (contrast enhancement, rotation correction)
-   - Try different Tesseract configurations
-   - Use language-specific OCR models
-
-3. **Add Database**
-   - Store verification results
-   - Track user submission history
-   - Add authentication
-
-4. **Enhance UI**
-   - Add document preview before upload
-   - Show OCR confidence metrics
-   - Implement real-time field matching feedback
-
-## Troubleshooting
-
-### Tesseract Not Found Error
-- Verify Tesseract is installed: `tesseract --version`
-- On Linux, may need to install: `sudo apt-get install tesseract-ocr`
-- Check pytesseract can find Tesseract path
-
-### CORS Errors
-- Ensure backend is running and CORS is enabled
-- Check backend URL in `frontend/src/api/client.ts`
-
-### File Upload Fails
-- Check file format is supported
-- Verify file size is < 10 MB
-- Ensure both frontend and backend are running
-
-### OCR Not Extracting Text
-- Ensure image quality is reasonable
-- Check file is not corrupted
-- Try with a clear, well-lit document image
+- Tesseract OCR binary must be installed separately (not included in Python deps)
+- SQLite used by default; PostgreSQL required for production
+- No user authentication implemented (auth context is a placeholder)
+- Mock provider results are not official verification
+- PDF generation for reports not yet implemented
+- Persistence uses SQLite by default; production requires PostgreSQL
 
 ## License
 
-This project is open-source and available for educational purposes.
-
-## Future Enhancements
-
-- [ ] Add support for more document types (driving license, passport, etc.)
-- [ ] Store verification results in database
-- [ ] Add user authentication
-- [ ] Implement batch document verification
-- [ ] Add document preview and annotation
-- [ ] Improve OCR with preprocessing filters
-- [ ] Add field confidence visualization
-- [ ] Mobile app version
-
-## Resources
-
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [React Documentation](https://react.dev/)
-- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [RapidFuzz Documentation](https://maxbachmann.github.io/RapidFuzz/)
+Internal use only.
